@@ -68,7 +68,7 @@ class TrainerBuilder:
             self.optim = Adam(self.model.parameters(),
                               lr=self.args.learning_rate)
         else:
-            raise notimplementederror
+            raise NotImplementedError
 
     def _create_loss_func(self):
         if self.args.loss_func.lower() == 'l1':
@@ -219,6 +219,8 @@ class Trainer:
             mask = calc_foreground_mask(patches.image).double()
             flat_mask = SampleWeights(patches, (mask, )).weights_flat
             mapping = torch.where(flat_mask > 0)[0].cpu().numpy()
+            if len(mapping) == 0:
+                continue
             indices = np.linspace(0, len(mapping) - 1, num_valid_samples)
             indices = np.round(indices).astype(int)
             i_array = np.ones(len(indices), dtype=int) * i
